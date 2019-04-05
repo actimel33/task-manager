@@ -42,13 +42,11 @@ app.get('/users/:id', async (req, res) => {
     
     try {
         const user = await User.findById(_id);
-        console.log(User.findById(_id))
         if (!user) {
             return res.status(404).send();
         }
         res.status(200).send(user);
     } catch (err) {
-        
         res
             .status(500)
             .send();
