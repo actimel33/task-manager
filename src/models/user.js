@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { isEmail } = require('validator');
+const Task = require('./task');
 
 const userSchema = mongoose.Schema({
     name: {
@@ -43,7 +44,15 @@ const userSchema = mongoose.Schema({
             require: true
         }
     }]
-})
+}, {
+    timestamps: true
+});
+
+userSchema.virtual('tasks', {
+    ref: 'Task',
+    localField: '_id',
+    foreignField: 'owner'
+});
 
 //create a method on individual instance
 userSchema.methods.toJSON = function() {
@@ -92,6 +101,13 @@ userSchema.pre('save', async function(next) {
     }
 
     next();
+});
+
+//delete user tasks when user is removed
+userSchema.pre('remove', async function (next) {
+    const user = this;
+
+    await Task.deleteMany({ owner: user._id });
 });
 
 const User = mongoose.model('User', userSchema);

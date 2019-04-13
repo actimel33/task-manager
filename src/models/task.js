@@ -1,7 +1,5 @@
 const mongoose = require('mongoose')
 
-const bcrypt = require('bcryptjs');
-
 const taskSchema = mongoose.Schema({
     description: {
         type: String,
@@ -11,7 +9,14 @@ const taskSchema = mongoose.Schema({
     done: {
         type: Boolean,
         default: false
+    },
+    owner: {
+        type: mongoose.Schema.Types.ObjectId,
+        require: true,
+        ref: 'User'
     }
+}, {
+    timestamps: true
 });
 
 //middleware erase before save;
